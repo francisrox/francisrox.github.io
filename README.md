@@ -1,0 +1,1 @@
+Francis S T is a B.E. CSE (Cyber Security) student ('28) at Sri Krishna College of Technology. An AI security learner and ethical hacker, he has completed 3+ virtual internships in penetration testing and network recon. Key projects include a custom port scanner, an intelligent honeypot, and a multi-agent LLM system for HackRx 6.0.
