@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Francis S T — Cybersecurity Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Design Tokens ── */
+  :root {
+    --bg:          #0a0d13;
+    --bg-2:        #0f1520;
+    --bg-card:     #111827;
+    --border:      rgba(99,179,237,0.12);
+    --border-glow: rgba(99,179,237,0.35);
+    --primary:     #63b3ed;
+    --primary-dim: rgba(99,179,237,0.15);
+    --accent:      #68d391;
+    --accent-dim:  rgba(104,211,145,0.12);
+    --danger:      #fc8181;
+    --text-1:      #f0f4f8;
+    --text-2:      #a0aec0;
+    --text-3:      #718096;
+    --mono:        'JetBrains Mono', monospace;
+    --sans:        'Space Grotesk', sans-serif;
+    --radius:      12px;
+    --radius-sm:   8px;
+    --glow: 0 0 40px rgba(99,179,237,0.08);
+  }
+
+  /* ── Reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text-1);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 3px; }
+
+  /* ── Noise Texture ── */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  /* ── Grid lines background ── */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* ── Glow orbs ── */
+  .orb {
+    position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0;
+  }
+  .orb-1 { width: 500px; height: 500px; top: -200px; right: -100px; background: rgba(99,179,237,0.06); }
+  .orb-2 { width: 400px; height: 400px; bottom: 10%; left: -150px; background: rgba(104,211,145,0.05); }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 16px 0;
+    background: rgba(10,13,19,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--primary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--text-3); font-weight: 400; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 13px; font-weight: 500; color: var(--text-2); letter-spacing: 0.04em;
+    text-transform: uppercase; transition: color 0.2s;
+    cursor: pointer;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .nav-cta {
+    padding: 8px 18px; border-radius: var(--radius-sm);
+    background: var(--primary-dim); border: 1px solid var(--border-glow);
+    color: var(--primary); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .nav-cta:hover { background: rgba(99,179,237,0.25); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100dvh;
+    display: flex; align-items: center; padding-top: 80px;
+  }
+  .hero-content { max-width: 780px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 100px;
+    background: var(--primary-dim); border: 1px solid var(--border-glow);
+    font-family: var(--mono); font-size: 12px; color: var(--primary);
+    margin-bottom: 28px;
+  }
+  .hero-tag .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero-name {
+    font-size: clamp(42px, 7vw, 80px); font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.03em; margin-bottom: 8px;
+  }
+  .hero-name .first { color: var(--text-1); }
+  .hero-name .last {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-role {
+    font-family: var(--mono); font-size: clamp(14px, 2vw, 17px);
+    color: var(--text-2); margin-bottom: 24px; letter-spacing: 0.01em;
+  }
+  .hero-role .highlight { color: var(--primary); }
+  .hero-bio {
+    font-size: 16px; color: var(--text-2); max-width: 560px;
+    line-height: 1.75; margin-bottom: 40px;
+  }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), #4299e1);
+    color: #0a0d13; font-weight: 700; font-size: 14px;
+    cursor: pointer; transition: all 0.2s; border: none;
+    box-shadow: 0 4px 24px rgba(99,179,237,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(99,179,237,0.4); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px; border-radius: var(--radius-sm);
+    background: transparent; border: 1px solid var(--border-glow);
+    color: var(--text-1); font-weight: 600; font-size: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--primary-dim); border-color: var(--primary); }
+  .hero-scroll {
+    margin-top: 64px; display: flex; align-items: center; gap: 12px;
+    color: var(--text-3); font-size: 12px; font-family: var(--mono);
+  }
+  .scroll-line { width: 48px; height: 1px; background: var(--border-glow); }
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap;
+  }
+  .stat { }
+  .stat-num {
+    font-size: 28px; font-weight: 700; font-family: var(--mono);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+  /* ── Section ── */
+  section { padding: 100px 0; }
+  .section-label {
+    font-family: var(--mono); font-size: 12px; color: var(--primary);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .section-label::after { content:''; flex: 1; height: 1px; background: var(--border); max-width: 120px; }
+  .section-title {
+    font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+    letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .section-sub { font-size: 16px; color: var(--text-2); margin-bottom: 56px; max-width: 480px; }
+
+  /* ── Skills ── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .skill-card {
+    padding: 24px; border-radius: var(--radius);
+    background: var(--bg-card); border: 1px solid var(--border);
+    transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .skill-card::before {
+    content:''; position:absolute; inset:0; border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--primary-dim), transparent);
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .skill-card:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: var(--glow); }
+  .skill-card:hover::before { opacity: 1; }
+  .skill-icon {
+    width: 44px; height: 44px; border-radius: var(--radius-sm);
+    background: var(--primary-dim); border: 1px solid var(--border-glow);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .skill-icon svg { width: 22px; height: 22px; color: var(--primary); }
+  .skill-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    padding: 4px 10px; border-radius: 100px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    font-family: var(--mono); font-size: 11px; color: var(--text-2);
+  }
+  .tag.green { background: var(--accent-dim); border-color: rgba(104,211,145,0.3); color: var(--accent); }
+  .tag.blue { background: var(--primary-dim); border-color: var(--border-glow); color: var(--primary); }
+
+  /* ── Experience Timeline ── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content:''; position:absolute; left:0; top:8px; bottom:0;
+    width: 1px; background: linear-gradient(to bottom, var(--primary), transparent);
+  }
+  .timeline-item { position: relative; margin-bottom: 44px; }
+  .timeline-item::before {
+    content:''; position:absolute; left:-33px; top:6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--primary); box-shadow: 0 0 12px rgba(99,179,237,0.5);
+    border: 2px solid var(--bg);
+  }
+  .timeline-meta {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .timeline-date {
+    font-family: var(--mono); font-size: 11px; color: var(--text-3);
+    padding: 3px 10px; border-radius: 100px;
+    background: var(--bg-card); border: 1px solid var(--border);
+  }
+  .timeline-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 100px; background: var(--accent-dim);
+    border: 1px solid rgba(104,211,145,0.3); color: var(--accent);
+  }
+  .timeline-item h3 { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+  .timeline-item .org { font-size: 13px; color: var(--primary); font-weight: 500; margin-bottom: 10px; }
+  .timeline-item p { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+
+  /* ── Projects ── */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+  .project-card {
+    padding: 28px; border-radius: var(--radius);
+    background: var(--bg-card); border: 1px solid var(--border);
+    transition: all 0.25s; cursor: pointer; position: relative;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .project-card:hover { border-color: var(--border-glow); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4), var(--glow); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .project-icon {
+    width: 48px; height: 48px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--primary-dim); border: 1px solid var(--border-glow);
+    flex-shrink: 0;
+  }
+  .project-icon svg { width: 24px; height: 24px; color: var(--primary); }
+  .project-icon.green { background: var(--accent-dim); border-color: rgba(104,211,145,0.3); }
+  .project-icon.green svg { color: var(--accent); }
+  .project-icon.red { background: rgba(252,129,129,0.1); border-color: rgba(252,129,129,0.3); }
+  .project-icon.red svg { color: var(--danger); }
+  .project-links { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    background: transparent; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-3); cursor: pointer; transition: all 0.2s;
+  }
+  .icon-btn:hover { border-color: var(--border-glow); color: var(--primary); background: var(--primary-dim); }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .project-card h3 { font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .project-card p { font-size: 13px; color: var(--text-2); line-height: 1.65; flex: 1; }
+  .project-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+
+  /* ── Achievements ── */
+  .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .achievement-card {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 22px; border-radius: var(--radius);
+    background: var(--bg-card); border: 1px solid var(--border);
+    transition: all 0.25s;
+  }
+  .achievement-card:hover { border-color: var(--border-glow); }
+  .ach-icon {
+    width: 42px; height: 42px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(252,129,129,0.15), rgba(252,129,129,0.05));
+    border: 1px solid rgba(252,129,129,0.3);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ach-icon svg { width: 20px; height: 20px; color: var(--danger); }
+  .achievement-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .achievement-card p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+  /* ── Certifications ── */
+  .cert-list { display: flex; flex-direction: column; gap: 14px; max-width: 600px; }
+  .cert-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; border-radius: var(--radius-sm);
+    background: var(--bg-card); border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .cert-item:hover { border-color: var(--border-glow); }
+  .cert-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .cert-item span { font-size: 14px; color: var(--text-1); font-weight: 500; }
+  .cert-item small { margin-left: auto; font-size: 12px; color: var(--text-3); font-family: var(--mono); }
+
+  /* ── Contact ── */
+  #contact { text-align: center; }
+  .contact-card {
+    max-width: 600px; margin: 0 auto;
+    padding: 48px; border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .contact-card::before {
+    content:''; position:absolute; top:-1px; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  }
+  .contact-card p { font-size: 16px; color: var(--text-2); margin-bottom: 32px; line-height: 1.7; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    font-size: 13px; font-weight: 500; color: var(--text-1);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .contact-link:hover { border-color: var(--border-glow); background: var(--primary-dim); color: var(--primary); }
+  .contact-link svg { width: 15px; height: 15px; }
+
+  /* ── Footer ── */
+  footer {
+    padding: 28px 0; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer p { font-size: 12px; color: var(--text-3); font-family: var(--mono); }
+  .footer-status {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--accent); font-family: var(--mono);
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 0; }
+
+  /* ── Animations ── */
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up:nth-child(2) { transition-delay: 0.1s; }
+  .fade-up:nth-child(3) { transition-delay: 0.2s; }
+  .fade-up:nth-child(4) { transition-delay: 0.3s; }
+  .fade-up:nth-child(5) { transition-delay: 0.4s; }
+  .fade-up:nth-child(6) { transition-delay: 0.5s; }
+
+  /* ── Mobile Hamburger ── */
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer;
+    padding: 6px; border-radius: 6px; background: transparent;
+    border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .hamburger:hover { border-color: var(--border-glow); }
+  .hamburger span {
+    display: block; width: 20px; height: 2px;
+    background: var(--text-2); border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; top: 60px; z-index: 99;
+    background: rgba(10,13,19,0.98); backdrop-filter: blur(20px);
+    padding: 32px 24px; flex-direction: column; gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    font-size: 16px; font-weight: 500; color: var(--text-2);
+    border: 1px solid transparent; transition: all 0.2s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .mobile-menu a:hover { background: var(--primary-dim); border-color: var(--border-glow); color: var(--primary); }
+  .mobile-menu .mob-cta {
+    margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), #4299e1);
+    color: #0a0d13; font-weight: 700; text-align: center; font-size: 15px;
+  }
+
+  /* ── Matrix Canvas ── */
+  #matrix-canvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; opacity: 0.07; z-index: 0;
+  }
+
+  /* ── Proficiency Bars ── */
+  .proficiency-section { margin-top: 60px; }
+  .prof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 48px; }
+  .prof-item { margin-bottom: 4px; }
+  .prof-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prof-name { font-size: 13px; font-weight: 500; color: var(--text-1); }
+  .prof-pct { font-family: var(--mono); font-size: 12px; color: var(--primary); }
+  .prof-track {
+    height: 4px; background: rgba(255,255,255,0.07); border-radius: 100px; overflow: hidden;
+  }
+  .prof-fill {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0; transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .prof-fill.animate { width: var(--w); }
+
+  /* ── Role Cards (What I'm Looking For) ── */
+  .role-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 40px; }
+  .role-card {
+    padding: 22px; border-radius: var(--radius);
+    background: var(--bg-card); border: 1px solid var(--border);
+    text-align: center; transition: all 0.25s; cursor: default;
+  }
+  .role-card:hover { border-color: var(--border-glow); transform: translateY(-3px); }
+  .role-emoji {
+    width: 48px; height: 48px; border-radius: var(--radius-sm);
+    margin: 0 auto 14px; display: flex; align-items: center; justify-content: center;
+  }
+  .role-emoji svg { width: 24px; height: 24px; }
+  .role-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .role-card p { font-size: 12px; color: var(--text-3); line-height: 1.6; }
+
+  /* ── Back to Top ── */
+  #back-top {
+    position: fixed; bottom: 28px; right: 28px; z-index: 200;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--bg-card); border: 1px solid var(--border-glow);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.3s;
+    opacity: 0; pointer-events: none; transform: translateY(12px);
+    color: var(--primary);
+  }
+  #back-top.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
+  #back-top:hover { background: var(--primary-dim); box-shadow: 0 0 20px rgba(99,179,237,0.3); }
+  #back-top svg { width: 18px; height: 18px; }
+
+  /* ── Active Nav ── */
+  .nav-links a.active { color: var(--primary); }
+
+  /* ── Progress bar (page scroll) ── */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%; transition: width 0.1s linear;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    .hero-stats { gap: 24px; }
+    .skills-grid, .projects-grid, .achievements-grid { grid-template-columns: 1fr; }
+    .contact-card { padding: 28px 20px; }
+    footer { flex-direction: column; text-align: center; }
+    .prof-grid { grid-template-columns: 1fr; }
+    .role-cards { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) {
+    .role-cards { grid-template-columns: 1fr; }
+  }
+
+  /* ── Terminal typing effect ── */
+  .terminal-line {
+    font-family: var(--mono); font-size: 13px; color: var(--text-2);
+    display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+  }
+  .terminal-prompt { color: var(--accent); }
+  .terminal-cmd { color: var(--primary); }
+  .terminal-out { color: var(--text-3); }
+  .terminal-box {
+    padding: 20px 24px; border-radius: var(--radius);
+    background: #080b11; border: 1px solid var(--border);
+    margin-top: 40px; font-family: var(--mono);
+  }
+  .terminal-title {
+    font-size: 11px; color: var(--text-3); margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-red { background: #fc8181; }
+  .t-yellow { background: #f6e05e; }
+  .t-green { background: #68d391; }
+
+  /* Typewriter cursor */
+  .cursor { display: inline-block; width: 2px; height: 14px; background: var(--primary); animation: blink 1s infinite; vertical-align: middle; margin-left: 2px; }
+  @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="container nav-inner">
+    <div class="nav-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      francis<span>.st</span>
+    </div>
+    <div class="nav-links">
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#achievements">Achievements</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="mailto:francisselva78@gmail.com" class="nav-cta">Hire Me</a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#skills" onclick="closeMobile()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Skills
+  </a>
+  <a href="#experience" onclick="closeMobile()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    Experience
+  </a>
+  <a href="#projects" onclick="closeMobile()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    Projects
+  </a>
+  <a href="#achievements" onclick="closeMobile()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    Achievements
+  </a>
+  <a href="#contact" onclick="closeMobile()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+    Contact
+  </a>
+  <a href="mailto:francisselva78@gmail.com" class="mob-cta">✉ Hire Me</a>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero" style="position:relative; overflow:hidden;">
+  <canvas id="matrix-canvas"></canvas>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span class="dot"></span>
+        Available for Internships & Entry-Level Roles
+      </div>
+      <h1 class="hero-name">
+        <div class="first">Francis</div>
+        <div class="last">S T</div>
+      </h1>
+      <p class="hero-role">
+        <span class="highlight">Cybersecurity</span> Enthusiast &amp; AI Security Learner
+      </p>
+      <p class="hero-bio">
+        B.E CSE (Cyber Security) student at Sri Krishna College of Technology '28, with hands-on internship experience in penetration testing, network security, and AI-powered security tools. Building the next generation of secure systems.
+      </p>
+      <div class="hero-actions">
+        <a href="mailto:francisselva78@gmail.com" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Get In Touch
+        </a>
+        <a href="https://github.com/francisrox" target="_blank" class="btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">3+</div>
+          <div class="stat-label">Internships</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Projects</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Hackathons</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2026</div>
+          <div class="stat-label">III Year CSE(Cybersecurity)</div>
+        </div>
+      </div>
+
+      <div class="terminal-box">
+        <div class="terminal-title">
+          <span class="t-dot t-red"></span>
+          <span class="t-dot t-yellow"></span>
+          <span class="t-dot t-green"></span>
+          francis@kali: ~
+        </div>
+        <div class="terminal-line">
+          <span class="terminal-prompt">❯</span>
+          <span class="terminal-cmd">whoami</span>
+        </div>
+        <div class="terminal-line" style="padding-left: 16px;">
+          <span class="terminal-out">cybersecurity-student | ethical-hacker | ai-developer</span>
+        </div>
+        <div class="terminal-line" style="margin-top:8px;">
+          <span class="terminal-prompt">❯</span>
+          <span class="terminal-cmd">cat skills.txt | grep --color "offensive"</span>
+        </div>
+        <div class="terminal-line" style="padding-left: 16px;">
+          <span class="terminal-out">nmap · wireshark · burpsuite · metasploit · hydra · python</span>
+        </div>
+        <div class="terminal-line" style="margin-top:8px;">
+          <span class="terminal-prompt">❯</span>
+          <span id="typing-text" class="terminal-cmd"></span><span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label">01 // Technical Arsenal</div>
+    <h2 class="section-title">Skills & Tools</h2>
+    <p class="section-sub">From offensive security tools to AI-powered systems — a full-stack security toolkit.</p>
+    <div class="skills-grid">
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 1 .5 4"/></svg>
+        </div>
+        <h3>Security Tools</h3>
+        <div class="skill-tags">
+          <span class="tag blue">Nmap</span>
+          <span class="tag blue">Wireshark</span>
+          <span class="tag blue">Burp Suite</span>
+          <span class="tag blue">Metasploit</span>
+          <span class="tag blue">Hydra</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>Programming Languages</h3>
+        <div class="skill-tags">
+          <span class="tag green">Python</span>
+          <span class="tag">SQL</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">HTML/CSS</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <h3>AI / ML Stack</h3>
+        <div class="skill-tags">
+          <span class="tag green">LLM Integration</span>
+          <span class="tag green">Prompt Engineering</span>
+          <span class="tag">Speech Recognition</span>
+          <span class="tag">Multi-Agent Systems</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Offensive Security</h3>
+        <div class="skill-tags">
+          <span class="tag blue">Penetration Testing</span>
+          <span class="tag">Network Recon</span>
+          <span class="tag">Wi-Fi Attacks</span>
+          <span class="tag">Reverse Shells</span>
+          <span class="tag">OSINT</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Network Security</h3>
+        <div class="skill-tags">
+          <span class="tag">Protocol Analysis</span>
+          <span class="tag">Traffic Interception</span>
+          <span class="tag">Port Scanning</span>
+          <span class="tag">OS Fingerprinting</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <h3>Platforms & Practice</h3>
+        <div class="skill-tags">
+          <span class="tag green">TryHackMe</span>
+          <span class="tag">Kali Linux</span>
+          <span class="tag">Scapy</span>
+          <span class="tag">Tkinter</span>
+          <span class="tag">pynput</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Proficiency Bars -->
+    <div class="proficiency-section">
+      <h3 style="font-size:18px; font-weight:600; margin-bottom:28px; color:var(--text-1);">Proficiency Levels</h3>
+      <div class="prof-grid" id="prof-grid">
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">Python</span><span class="prof-pct">88%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:88%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">Nmap / Network Recon</span><span class="prof-pct">85%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:85%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">Wireshark / Traffic Analysis</span><span class="prof-pct">80%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:80%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">Metasploit / Exploitation</span><span class="prof-pct">72%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:72%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">Burp Suite / Web Security</span><span class="prof-pct">70%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:70%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">LLM Integration / AI</span><span class="prof-pct">75%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:75%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">JavaScript / Browser APIs</span><span class="prof-pct">65%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:65%"></div></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-header"><span class="prof-name">Linux / Kali</span><span class="prof-pct">82%</span></div>
+          <div class="prof-track"><div class="prof-fill" style="--w:82%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── LOOKING FOR ── -->
+<section id="looking-for" style="background: var(--bg-2); padding: 80px 0;">
+  <div class="container">
+    <div class="section-label">02.5 // Target Roles</div>
+    <h2 class="section-title">What I'm Looking For</h2>
+    <p class="section-sub">Actively seeking opportunities where I can apply and grow my offensive security skillset.</p>
+    <div class="role-cards">
+      <div class="role-card fade-up">
+        <div class="role-emoji" style="background: rgba(99,179,237,0.1); border:1px solid rgba(99,179,237,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#63b3ed" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/><path d="m9 8 3 3 3-3"/></svg>
+        </div>
+        <h4>SOC Analyst</h4>
+        <p>Monitoring, threat detection, and incident response in a Security Operations Center.</p>
+      </div>
+      <div class="role-card fade-up">
+        <div class="role-emoji" style="background: rgba(104,211,145,0.1); border:1px solid rgba(104,211,145,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#68d391" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h4>Penetration Tester</h4>
+        <p>Ethical hacking, vulnerability assessment, and security audits.</p>
+      </div>
+      <div class="role-card fade-up">
+        <div class="role-emoji" style="background: rgba(252,129,129,0.1); border:1px solid rgba(252,129,129,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fc8181" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="m15 5-3 1-3-1"/></svg>
+        </div>
+        <h4>Network Security</h4>
+        <p>Traffic analysis, protocol security, and infrastructure hardening.</p>
+      </div>
+      <div class="role-card fade-up">
+        <div class="role-emoji" style="background: rgba(246,224,94,0.08); border:1px solid rgba(246,224,94,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f6e05e" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <h4>AI Security Research</h4>
+        <p>LLM security, adversarial AI, and intelligent threat detection systems.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section id="experience">
+  <div class="container">
+    <div class="section-label">02 // Work History</div>
+    <h2 class="section-title">Experience</h2>
+    <p class="section-sub">Real-world exposure through structured internship programs.</p>
+
+    <div class="timeline">
+      <div class="timeline-item fade-up">
+        <div class="timeline-meta">
+          <span class="timeline-date">Apr 25 – Jun 10, 2025</span>
+          <span class="timeline-badge">Latest</span>
+        </div>
+        <h3>Cyber Security &amp; Ethical Hacking Intern</h3>
+        <div class="org">CODTECH IT Solutions</div>
+        <p>Deepened understanding of digital security, ethical hacking practices, and real-world threat handling through hands-on tasks in a structured internship program. Gained practical exposure to industry workflows and security methodologies.</p>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-meta">
+          <span class="timeline-date">1 Month Virtual</span>
+        </div>
+        <h3>Cybersecurity Virtual Intern</h3>
+        <div class="org">ShadowFox</div>
+        <p>Progressed from basic Nmap scanning to advanced offensive security — directory brute-forcing, Wireshark traffic interception, Metasploit reverse shell creation, Wi-Fi deauthentication and handshake capture, and completing the TryHackMe Pentesting Room with full documentation.</p>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-meta">
+          <span class="timeline-date">4 Weeks Virtual</span>
+          <span class="timeline-badge" style="background: rgba(99,179,237,0.1); border-color: rgba(99,179,237,0.3); color: var(--primary);">AICTE</span>
+        </div>
+        <h3>Virtual Cybersecurity Intern</h3>
+        <div class="org">VOIS for Tech / Edunet Foundation</div>
+        <p>Built two real-world cybersecurity tools — an Advanced Network Port Scanner and a Python Keylogger with GUI — while gaining hands-on exposure to ethical hacking, cryptography, and networking concepts guided by industry mentors.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PROJECTS ── -->
+<section id="projects">
+  <div class="container">
+    <div class="section-label">03 // Build Log</div>
+    <h2 class="section-title">Technical Projects</h2>
+    <p class="section-sub">Security tools, AI systems, and offensive utilities built from scratch.</p>
+    <div class="projects-grid">
+
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/francisrox/Advanced-Network-Port-Scanner.git" target="_blank" class="icon-btn" title="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3>Advanced Network Port Scanner</h3>
+        <p>Nmap-inspired scanner supporting TCP/SYN/UDP scans, OS fingerprinting, firewall detection, banner grabbing, and multithreaded reconnaissance.</p>
+        <div class="project-stack">
+          <span class="tag green">Python</span>
+          <span class="tag">Scapy</span>
+          <span class="tag">Multithreading</span>
+        </div>
+      </div>
+
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div class="project-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/francisrox/Honeypot.git" target="_blank" class="icon-btn" title="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3>Intelligent Honeypot &amp; Scam Detection System</h3>
+        <p>AI-powered honeypot for scam interaction, behavioral detection, and threat intelligence extraction using AI simulation techniques.</p>
+        <div class="project-stack">
+          <span class="tag green">Python</span>
+          <span class="tag green">AI Simulation</span>
+        </div>
+      </div>
+
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div class="project-icon red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/francisrox/Python-Keylogger-with-Tkinter-GUI-.git" target="_blank" class="icon-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3>Python Keylogger with Tkinter GUI</h3>
+        <p>Educational endpoint monitoring tool featuring real-time keystroke capture, structured logging, and a clean Tkinter-based graphical interface.</p>
+        <div class="project-stack">
+          <span class="tag green">Python</span>
+          <span class="tag">pynput</span>
+          <span class="tag">Tkinter</span>
+        </div>
+      </div>
+
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/francisrox/Password-Strength-Checker.git" target="_blank" class="icon-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3>Browser Password Security Extension</h3>
+        <p>Privacy-focused Chrome extension for password strength analysis and credential reuse detection using Browser APIs.</p>
+        <div class="project-stack">
+          <span class="tag">JavaScript</span>
+          <span class="tag">Browser APIs</span>
+          <span class="tag">Chrome Extension</span>
+        </div>
+      </div>
+
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div class="project-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/francisrox" target="_blank" class="icon-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3>JERICA — Voice-Enabled AI Assistant</h3>
+        <p>Voice-controlled AI assistant with speech recognition, system automation, and web interaction capabilities. Built with Python's SpeechRecognition library.</p>
+        <div class="project-stack">
+          <span class="tag green">Python</span>
+          <span class="tag green">SpeechRecognition</span>
+          <span class="tag">Automation</span>
+        </div>
+      </div>
+
+      <div class="project-card fade-up" style="border-color: rgba(99,179,237,0.25); background: linear-gradient(135deg, rgba(99,179,237,0.05), var(--bg-card));">
+        <div class="project-header">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <span class="timeline-badge">National</span>
+        </div>
+        <h3>Multi-Agent LLM System</h3>
+        <p>Designed a multi-agent LLM system for task orchestration and parallel AI execution. Presented a live demo at HackRx 6.0 National Hackathon 2024.</p>
+        <div class="project-stack">
+          <span class="tag blue">LLM</span>
+          <span class="tag blue">Multi-Agent</span>
+          <span class="tag">Orchestration</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── ACHIEVEMENTS ── -->
+<section id="achievements">
+  <div class="container">
+    <div class="section-label">04 // Recognition</div>
+    <h2 class="section-title">Achievements</h2>
+    <p class="section-sub">Competing at the national level while still in second year.</p>
+
+    <div class="achievements-grid">
+      <div class="achievement-card fade-up">
+        <div class="ach-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <div>
+          <h3>HackRx 6.0 National Hackathon</h3>
+          <p>Designed and presented a multi-agent LLM system for task orchestration and parallel AI execution at a national-level hackathon in 2024.</p>
+        </div>
+      </div>
+
+      <div class="achievement-card fade-up">
+        <div class="ach-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <h3>Hackelite '26 — SRM IST Vadapalani</h3>
+          <p>Built a Secure Defense Procurement &amp; Vendor Transparency System using blockchain integrity and SHA-256 cryptography during a 24-hour hackathon.</p>
+        </div>
+      </div>
+
+      <div class="achievement-card fade-up">
+        <div class="ach-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <h3>TryHackMe Pentesting Room</h3>
+          <p>Completed the full TryHackMe Pentesting Room during the ShadowFox internship with complete documentation of findings and methodology.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certifications -->
+    <div style="margin-top: 60px;">
+      <div class="section-label">05 // Credentials</div>
+      <h2 class="section-title" style="margin-bottom: 32px;">Certifications</h2>
+      <div class="cert-list">
+        <div class="cert-item fade-up">
+          <span class="cert-dot"></span>
+          <span>Networking Essentials</span>
+          <small>Cisco</small>
+          
+        </div>
+        <div class="cert-item fade-up">
+          <span class="cert-dot"></span>
+          <span>Introduction to Network Analysis</span>
+          <small>Security Blue Team</small>
+        </div>
+        <div class="cert-item fade-up">
+          <span class="cert-dot" style="background: var(--primary);"></span>
+          <span>Additional Cybersecurity Courses</span>
+          <small>Coursera &amp; Udemy</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label" style="justify-content: center;">06 // Let's Connect</div>
+    <h2 class="section-title">Open to Opportunities</h2>
+    <div class="contact-card">
+      <p>Looking for a cybersecurity internship or entry-level role in SOC, penetration testing, or network security. Let's build something secure together.</p>
+      <div class="contact-links">
+        <a href="mailto:francisselva78@gmail.com" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          francisselva78@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/francis-selvaraj-6451aa330" target="_blank" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/francisrox" target="_blank" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58 0-.28-.01-1.03-.02-2.03-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.23 1.84 1.23 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3.01-.4c1.02.005 2.05.138 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.01 2.9-.01 3.3 0 .32.21.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="tel:+916374111895" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.12 6.12l1.86-1.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          +91 6374111895
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BACK TO TOP ── -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ── FOOTER ── -->
+<div class="container">
+  <footer>
+    <p>© 2026 Francis S T · Built with passion &amp; Tailwind spirit</p>
+    <div class="footer-status">
+      <span class="status-dot"></span>
+      Open to work · Coimbatore, India
+    </div>
+  </footer>
+</div>
+
+<script>
+  /* ── Scroll animations ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  /* ── Proficiency bars ── */
+  const profObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.prof-fill').forEach(bar => bar.classList.add('animate'));
+        profObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const profGrid = document.getElementById('prof-grid');
+  if (profGrid) profObserver.observe(profGrid);
+
+  /* ── Terminal typewriter ── */
+  const lines = [
+    'nmap -sV -O target.ip',
+    'python3 honeypot.py --listen 443',
+    'wireshark -i eth0 -k -f "tcp port 80"',
+    'msfconsole -q -x "use exploit/multi/handler"',
+    'python3 port_scanner.py --threads 50 --syn',
+    'hydra -l admin -P rockyou.txt ssh://target',
+  ];
+  let li = 0, ci = 0, deleting = false;
+  const typingEl = document.getElementById('typing-text');
+  function type() {
+    if (!typingEl) return;
+    const line = lines[li];
+    if (!deleting) {
+      if (ci <= line.length) {
+        typingEl.textContent = line.slice(0, ci++);
+        setTimeout(type, 55);
+      } else {
+        setTimeout(() => { deleting = true; type(); }, 2000);
+      }
+    } else {
+      if (ci > 0) {
+        typingEl.textContent = line.slice(0, --ci);
+        setTimeout(type, 28);
+      } else {
+        deleting = false;
+        li = (li + 1) % lines.length;
+        setTimeout(type, 400);
+      }
+    }
+  }
+  setTimeout(type, 1400);
+
+  /* ── Nav scroll + active links ── */
+  const nav = document.querySelector('nav');
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const scrollBar = document.getElementById('scroll-progress');
+  const backTop = document.getElementById('back-top');
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+
+    // Scroll progress bar
+    if (scrollBar) scrollBar.style.width = (scrollY / docH * 100) + '%';
+
+    // Nav bg
+    nav.style.background = scrollY > 50 ? 'rgba(10,13,19,0.97)' : 'rgba(10,13,19,0.85)';
+
+    // Back to top
+    if (backTop) backTop.classList.toggle('visible', scrollY > 400);
+
+    // Active nav highlighting
+    let current = '';
+    sections.forEach(sec => {
+      if (scrollY >= sec.offsetTop - 120) current = sec.getAttribute('id');
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+
+  /* ── Hamburger menu ── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger?.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  function closeMobile() {
+    hamburger?.classList.remove('open');
+    mobileMenu?.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  /* ── Matrix rain canvas ── */
+  const canvas = document.getElementById('matrix-canvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    const hero = document.getElementById('hero');
+    function resizeCanvas() {
+      canvas.width = hero.offsetWidth;
+      canvas.height = hero.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ∑∆Ω∞≈∫√<>{}[]';
+    const fontSize = 13;
+    let cols = Math.floor(canvas.width / fontSize);
+    let drops = Array(cols).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(10,13,19,0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + 'px JetBrains Mono, monospace';
+      cols = Math.floor(canvas.width / fontSize);
+      if (drops.length !== cols) drops = Array(cols).fill(1);
+
+      for (let i = 0; i < cols; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        // Gradient: green at head, fading blue behind
+        const bright = Math.random() > 0.95;
+        ctx.fillStyle = bright ? '#a0f0c0' : (Math.random() > 0.5 ? '#63b3ed' : '#2d5a8e');
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    // Only animate if user hasn't set reduced motion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) setInterval(drawMatrix, 55);
+  }
+
+  /* ── Smooth counter animation for stats ── */
+  const statNums = document.querySelectorAll('.stat-num');
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = el.textContent;
+      const numMatch = target.match(/\d+/);
+      if (!numMatch) return;
+      const end = parseInt(numMatch[0]);
+      const suffix = target.replace(/[\d]/g, '');
+      let start = 0;
+      const duration = 1200;
+      const step = duration / end;
+      const timer = setInterval(() => {
+        start++;
+        el.textContent = start + suffix;
+        if (start >= end) { el.textContent = target; clearInterval(timer); }
+      }, Math.max(step, 16));
+      statObserver.unobserve(el);
+    });
+  }, { threshold: 1 });
+  statNums.forEach(el => statObserver.observe(el));
+</script>
+</body>
+</html>
